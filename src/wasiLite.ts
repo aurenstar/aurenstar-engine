@@ -37,6 +37,7 @@ export function createWasiImports(
       return ERRNO_SUCCESS;
     },
     environ_get: () => ERRNO_SUCCESS,
+    fd_fdstat_set_flags: () => ERRNO_SUCCESS,
     fd_prestat_get: (fd: number, bufPtr: number) => {
       if (fd !== PREOPEN_FD) return ERRNO_BADF;
       view().setUint8(bufPtr, 0); // tag: directory

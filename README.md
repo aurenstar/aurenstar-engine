@@ -15,7 +15,8 @@ Returns `bodies` (sun, moon, planets, nodes, Lilith, Chiron, Ceres: longitude, l
 ## Layout
 - `src/worker.ts` – the HTTP endpoint (`wrangler.jsonc` = Cloudflare settings)
 - `src/swiss.ts`, `src/wasiLite.ts` – WebAssembly wrapper (minimal WASI layer)
-- `src/aurenstar.wasm` – Swiss Ephemeris build
+- `src/aurenstar.wasm` – Swiss Ephemeris build (compiled from `native/`; run `native/build.sh` to rebuild)
+- `native/aur.c` – our C wrapper; `native/swisseph/` – unmodified Swiss Ephemeris C sources (https://github.com/aloistr/swisseph, commit 94621aba)
 - `public/ephe/*.se1` – ephemeris data files from Astrodienst (1200–2400)
 
 ## Run locally
