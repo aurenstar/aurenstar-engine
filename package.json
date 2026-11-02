@@ -5,7 +5,8 @@
   "license": "AGPL-3.0-only",
   "description": "Planet positions with the Swiss Ephemeris (WebAssembly) on Cloudflare Pages Functions",
   "scripts": {
-    "dev": "wrangler pages dev public --port 8788",
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
     "check": "tsc --noEmit"
   },
   "devDependencies": {

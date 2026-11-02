@@ -1,7 +1,7 @@
 # Aurenstar Engine
 
 Small public service that returns planet positions and house cusps using the
-[Swiss Ephemeris](https://www.astro.com/swisseph/) compiled to WebAssembly. It runs on Cloudflare Pages Functions.
+[Swiss Ephemeris](https://www.astro.com/swisseph/) compiled to WebAssembly. It runs as a Cloudflare Worker with static assets.
 The rest of the Aurenstar website is a separate, private program that calls this service over HTTP.
 
 ```
@@ -13,7 +13,7 @@ Returns `bodies` (sun, moon, planets, nodes, Lilith, Chiron, Ceres: longitude, l
 `houses` (cusps, ascendant, midheaven) and `status` (0 = all from the ephemeris files). Supported dates: 1300-2390.
 
 ## Layout
-- `functions/api/positions.ts` – the HTTP endpoint
+- `src/worker.ts` – the HTTP endpoint (`wrangler.jsonc` = Cloudflare settings)
 - `src/swiss.ts`, `src/wasiLite.ts` – WebAssembly wrapper (minimal WASI layer)
 - `src/aurenstar.wasm` – Swiss Ephemeris build
 - `public/ephe/*.se1` – ephemeris data files from Astrodienst (1200–2400)
@@ -22,6 +22,7 @@ Returns `bodies` (sun, moon, planets, nodes, Lilith, Chiron, Ceres: longitude, l
 ```
 npm install
 npm run dev     # http://127.0.0.1:8788
+npm run deploy  # publishes to Cloudflare
 ```
 
 ## Optional protection

@@ -1,8 +1,9 @@
-// POST /api/positions   { "utc": "1990-01-26T16:30:00Z", "lat": -23.55, "lon": -46.63, "houseSystem": "P" }
+// Aurenstar Engine (Cloudflare Worker): POST /api/positions
+//   { "utc": "1990-01-26T16:30:00Z", "lat": -23.55, "lon": -46.63, "houseSystem": "P" }
 // Returns planet positions and house cusps from the Swiss Ephemeris (see LICENSE: AGPL-3.0).
 // Source code of this service: https://github.com/aurenstar/aurenstar-engine
-import swissWasm from '../../src/aurenstar.wasm';
-import { SwissEngine, ephemerisFilesForJd } from '../../src/swiss';
+import swissWasm from './aurenstar.wasm';
+import { SwissEngine, ephemerisFilesForJd } from './swiss';
 
 interface Env {
   ASSETS: { fetch(input: Request | string | URL): Promise<Response> };
@@ -19,7 +20,7 @@ const json = (data: unknown, status = 200) =>
 let engine: SwissEngine | undefined;
 const getEngine = () => (engine ??= new SwissEngine(swissWasm));
 
-export const onRequestPost = async ({ request, env }: { request: Request; env: Env }) => {
+async function positions(request: Request, env: Env): Promise<Response> {
   if (env.ENGINE_KEY && request.headers.get('x-engine-key') !== env.ENGINE_KEY) return json({ error: 'unauthorized' }, 401);
 
   let body: { utc?: string; lat?: number; lon?: number; houseSystem?: string };
@@ -51,4 +52,15 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     console.error('engine error', error);
     return json({ error: 'Calculation is temporarily unavailable.' }, 502);
   }
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    if (url.pathname === '/api/positions') {
+      if (request.method !== 'POST') return json({ error: 'Use POST' }, 405);
+      return positions(request, env);
+    }
+    return env.ASSETS.fetch(request); // home page and ephemeris files
+  },
 };
